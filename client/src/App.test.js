@@ -1,17 +1,24 @@
 import React from 'react'
-import { render } from '@testing-library/react'
+import { rest } from 'msw'
+import { setupServer } from 'msw/node'
+import { screen, render } from '@testing-library/react'
 import App from './App'
+import testPhotos from './test/testPhotos.json'
 
-test('App renders', () => {
+const server = setupServer(
+  rest.get('https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos', (req, res, ctx) =>
+    res(ctx.json(testPhotos))
+  )
+)
+
+beforeAll(() => server.listen())
+afterEach(() => server.resetHandlers())
+afterAll(() => server.close())
+
+test('photos are rendered', async () => {
   render(<App />)
+
+  await screen.findAllByAltText(/Curiosity/)
+
+  expect(screen.getAllByRole('img')).toHaveLength(6)
 })
-
-test()
-
-/* test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
-}); */
-
-/* dtc0lIsqFGs7ZFH2hbwFdYMbktMAzoiaaadC09Qy */
