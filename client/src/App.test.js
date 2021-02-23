@@ -16,9 +16,8 @@ afterEach(() => server.resetHandlers())
 afterAll(() => server.close())
 
 test('photos are rendered', async () => {
-  render(<App />)
+  render(<App width="md" />)
 
-  await screen.findAllByAltText(/Curiosity/)
-
+  await screen.findAllByAltText(/curiosity/i)
   expect(screen.getAllByRole('img')).toHaveLength(6)
 })
