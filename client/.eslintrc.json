@@ -5,10 +5,14 @@
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "semi": [2, "never"],
     "no-console": 1,
-    "prettier/prettier": 2
+    "prettier/prettier": 2,
+    "react/jsx-props-no-spreading": ["off"]
   },
   "env": {
     "browser": true,
     "jest": true
+  },
+  "globals": {
+    "screen": true
   }
 }
