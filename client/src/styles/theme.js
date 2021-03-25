@@ -8,7 +8,13 @@ const theme = createMuiTheme({
   },
   typography: {
     h1: {
-      fontFamily: ['Krona One'].join(','),
+      fontFamily: ['Krona One'],
+    },
+    h2: {
+      fontFamily: ['Krona One'],
+    },
+    h3: {
+      fontFamily: ['Krona One'],
     },
     body1: {
       fontFamily: ['Jura'],
