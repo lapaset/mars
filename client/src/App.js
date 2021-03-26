@@ -13,13 +13,13 @@ const App = () => {
   const rover = 'curiosity'
 
   const getMeta = async (r) => {
-    const { data } = await axios.get(`${baseUrl}/manifests/${r}?api_key=${apiKey}`, {
-      retry: 1,
-    })
+    const { data } = await axios.get(`${baseUrl}/manifests/${r}?api_key=${apiKey}`)
     return data
   }
 
-  const meta = useQuery(['meta', rover], () => getMeta(rover))
+  const meta = useQuery(['meta', rover], () => getMeta(rover), {
+    retry: 1,
+  })
 
   return meta ? (
     <ThemeProvider theme={theme}>

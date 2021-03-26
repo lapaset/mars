@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 import axios from 'axios'
 import { useInfiniteQuery } from 'react-query'
@@ -8,65 +8,35 @@ import { apiKey, baseUrl } from '../secret.json'
 import theme from '../styles/theme'
 
 const Photos = ({ sol, rover, width }) => {
-  const [photos, setPhotos] = useState(null)
-  const lastPhotoRef = useRef()
-  const pageRef = useRef(1)
-  const loadingRef = useRef(false)
-  const moduloRef = useRef(0)
+  const bottomRef = useRef()
 
   const photosPerPage = 25
   const highlight = 7
   const cols = 3
 
-  const getPhotos = async (r, s, page = 1) => {
+  const getPhotos = async ({ pageParam = 1 }, r, s) => {
     const { data } = await axios.get(
-      `${baseUrl}/rovers/${r}/photos?sol=${s}&page=${page}&api_key=${apiKey}`
+      `${baseUrl}/rovers/${r}/photos?sol=${s}&page=${pageParam}&api_key=${apiKey}`
     )
-    const nextPage = data.photos.length < photosPerPage ? null : page + 1
+    const nextPage = data.photos.length < photosPerPage ? undefined : pageParam + 1
     return { data, nextPage }
   }
 
-  const images = useInfiniteQuery(['photos', { rover, sol }], () => getPhotos(rover, sol), {
+  const photos = useInfiniteQuery(['photos', rover, sol], (p) => getPhotos(p, rover, sol), {
     getNextPageParam: (lastPage) => lastPage.nextPage,
+    retry: 1,
   })
 
-  console.log('images', images)
-
-  useEffect(async () => {
-    if (!sol) return
-    const { data } = await axios.get(
-      `${baseUrl}/rovers/${rover}/photos?sol=${sol}&page=${pageRef.current}&api_key=${apiKey}`
-    )
-    pageRef.current = data.photos.length < photosPerPage ? null : pageRef.current + 1
-    if (data.photos.length === 0) return
-    moduloRef.current = data.photos[0].id % highlight
-    setPhotos(data.photos)
-  }, [sol])
-
   useEffect(() => {
-    const handleScroll = async () => {
+    const handleScroll = () => {
       if (
-        loadingRef.current ||
-        !sol ||
-        !photos ||
-        !pageRef.current ||
-        !lastPhotoRef ||
-        lastPhotoRef.current.getBoundingClientRect().top > window.innerHeight
+        !photos.isLoading &&
+        !photos.isFetchingNextPage &&
+        photos.hasNextPage &&
+        bottomRef.current &&
+        bottomRef.current.getBoundingClientRect().top < window.innerHeight
       )
-        return
-
-      try {
-        loadingRef.current = true
-        const { data } = await axios.get(
-          `${baseUrl}/rovers/${rover}/photos?sol=${sol}&page=${pageRef.current}&api_key=${apiKey}`
-        )
-        if (data.photos.length > 0) setPhotos(photos.concat(data.photos))
-        pageRef.current = data.photos.length < photosPerPage ? null : pageRef.current + 1
-        loadingRef.current = false
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.log('Error loading more photos', e)
-      }
+        photos.fetchNextPage()
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
@@ -76,22 +46,32 @@ const Photos = ({ sol, rover, width }) => {
 
   const getCellHeight = () => (isWidthUp('sm', width) ? 200 : 120)
   const getGridTileSize = (id) =>
-    moduloRef.current !== null && (id - moduloRef.current) % highlight === 0 ? cols : 1
+    (id - (photos.data.pages[0].data.photos[0].id % highlight)) % highlight === 0 ? cols : 1
 
-  return photos ? (
-    <GridList cellHeight={getCellHeight()} className={theme.gridList} cols={cols}>
-      {photos.map((p, i) => (
-        <GridListTile key={p.id} cols={getGridTileSize(p.id)} rows={getGridTileSize(p.id)}>
-          {i === photos.length - 1 && <div ref={lastPhotoRef} />}
-          <img
-            src={p.img_src}
-            alt={`${p.rover.name} ${p.camera.full_name} ${p.earth_date}`}
-            className="MuiGridListTile-imgFullHeight"
-          />
-        </GridListTile>
-      ))}
-    </GridList>
-  ) : null
+  return (
+    <>
+      {photos.status === 'success' && (
+        <GridList cellHeight={getCellHeight()} className={theme.gridList} cols={cols}>
+          {photos.data.pages.map((page) =>
+            page.data.photos.map((p) => (
+              <GridListTile key={p.id} cols={getGridTileSize(p.id)} rows={getGridTileSize(p.id)}>
+                <img
+                  src={p.img_src}
+                  alt={`${p.rover.name} ${p.camera.full_name} ${p.earth_date}`}
+                  className="MuiGridListTile-imgFullHeight"
+                />
+              </GridListTile>
+            ))
+          )}
+          <div ref={bottomRef} />
+        </GridList>
+      )}
+      {(photos.status === 'loading' || photos.isFetchingNextPage) && <div>loading</div>}
+      {photos.status === 'error' && (
+        <div>Nasa says no :( Try refreshing the page or come back later.</div>
+      )}
+    </>
+  )
 }
 
 Photos.propTypes = {
