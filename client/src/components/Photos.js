@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 import axios from 'axios'
+import { useInfiniteQuery } from 'react-query'
 import withWidth, { isWidthUp } from '@material-ui/core/withWidth'
 import { GridList, GridListTile } from '@material-ui/core/'
 import { apiKey, baseUrl } from '../secret.json'
@@ -16,6 +17,20 @@ const Photos = ({ sol, rover, width }) => {
   const photosPerPage = 25
   const highlight = 7
   const cols = 3
+
+  const getPhotos = async (r, s, page = 1) => {
+    const { data } = await axios.get(
+      `${baseUrl}/rovers/${r}/photos?sol=${s}&page=${page}&api_key=${apiKey}`
+    )
+    const nextPage = data.photos.length < photosPerPage ? null : page + 1
+    return { data, nextPage }
+  }
+
+  const images = useInfiniteQuery(['photos', { rover, sol }], () => getPhotos(rover, sol), {
+    getNextPageParam: (lastPage) => lastPage.nextPage,
+  })
+
+  console.log('images', images)
 
   useEffect(async () => {
     if (!sol) return

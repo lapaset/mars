@@ -13,7 +13,9 @@ const App = () => {
   const rover = 'curiosity'
 
   const getMeta = async (r) => {
-    const { data } = await axios.get(`${baseUrl}/manifests/${r}?api_key=${apiKey}`)
+    const { data } = await axios.get(`${baseUrl}/manifests/${r}?api_key=${apiKey}`, {
+      retry: 1,
+    })
     return data
   }
 
