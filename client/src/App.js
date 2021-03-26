@@ -21,6 +21,7 @@ const App = (props) => {
   const lastPhotoRef = useRef()
   const pageRef = useRef(1)
   const loadingRef = useRef(false)
+  const moduloRef = useRef(0)
 
   useEffect(async () => {
     const meta = await axios.get(`${baseUrl}/manifests/${rover}?api_key=${apiKey}`)
@@ -33,6 +34,8 @@ const App = (props) => {
       `${baseUrl}/rovers/${rover}/photos?sol=${sol}&page=${pageRef.current}&api_key=${apiKey}`
     )
     pageRef.current = data.photos.length < photosPerPage ? null : pageRef.current + 1
+    if (data.photos.length === 0) return
+    moduloRef.current = data.photos[0].id % 7
     setPhotos(data.photos)
   }, [sol])
 
@@ -68,13 +71,9 @@ const App = (props) => {
   }, [sol, photos])
 
   const getGridTileSize = (id) => {
-    const getSizeBig = () => {
-      if (id % 7 === 0) return getGridListCols()
-      return 2
-    }
+    const size = (id - moduloRef.current) % 7 === 0 ? getGridListCols() : 1
 
-    if (isWidthUp('sm', props.width)) return getSizeBig()
-    return id % 3 === 0 ? 2 : 1
+    return isWidthUp('sm', props.width) ? size * 2 : size
   }
 
   return (
@@ -84,7 +83,7 @@ const App = (props) => {
         {sol && <Header sol={sol} />}
         <main>
           {photos && (
-            <GridList cellHeight={100} className={theme.gridList} cols={getGridListCols()}>
+            <GridList cellHeight={120} className={theme.gridList} cols={getGridListCols()}>
               {photos.map((p, i) =>
                 i === photos.length - 1 ? (
                   <GridListTile
