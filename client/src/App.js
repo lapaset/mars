@@ -14,10 +14,9 @@ const baseUrl = 'https://api.nasa.gov/mars-photos/api/v1'
 const photosPerPage = 25
 const rover = 'curiosity'
 
-const App = (props) => {
+const App = ({ width }) => {
   const [photos, setPhotos] = useState(null)
   const [sol, setSol] = useState(null)
-  const getGridListCols = () => (isWidthUp('sm', props.width) ? 6 : 3)
   const lastPhotoRef = useRef()
   const pageRef = useRef(1)
   const loadingRef = useRef(false)
@@ -70,11 +69,10 @@ const App = (props) => {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [sol, photos])
 
-  const getGridTileSize = (id) => {
-    const size = (id - moduloRef.current) % 7 === 0 ? getGridListCols() : 1
+  const cols = 3
 
-    return isWidthUp('sm', props.width) ? size * 2 : size
-  }
+  const getCellHeight = () => (isWidthUp('sm', width) ? 200 : 120)
+  const getGridTileSize = (id) => ((id - moduloRef.current) % 7 === 0 ? cols : 1)
 
   return (
     <ThemeProvider theme={theme}>
@@ -83,7 +81,7 @@ const App = (props) => {
         {sol && <Header sol={sol} />}
         <main>
           {photos && (
-            <GridList cellHeight={120} className={theme.gridList} cols={getGridListCols()}>
+            <GridList cellHeight={getCellHeight()} className={theme.gridList} cols={cols}>
               {photos.map((p, i) =>
                 i === photos.length - 1 ? (
                   <GridListTile
