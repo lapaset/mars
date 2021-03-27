@@ -50,7 +50,7 @@ const Photos = ({ sol, rover, width }) => {
     (id - (photos.data.pages[0].data.photos[0].id % highlight)) % highlight === 0 ? cols : 1
 
   return (
-    <>
+    <main>
       {photos.status === 'success' && (
         <SRLWrapper>
           <GridList cellHeight={getCellHeight()} className={theme.gridList} cols={cols}>
@@ -73,7 +73,7 @@ const Photos = ({ sol, rover, width }) => {
         <div>Nasa says no :( Try refreshing the page or come back later.</div>
       )}
       <div ref={bottomRef} />
-    </>
+    </main>
   )
 }
 

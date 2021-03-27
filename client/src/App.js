@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import axios from 'axios'
 import { useQuery } from 'react-query'
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -8,9 +8,11 @@ import { apiKey, baseUrl } from './secret.json'
 import Header from './components/Header'
 import Photos from './components/Photos'
 import theme from './styles/theme'
+import SolControls from './components/SolControls'
 
 const App = () => {
   const rover = 'curiosity'
+  const [sol, setSol] = useState(null)
 
   const getMeta = async (r) => {
     const { data } = await axios.get(`${baseUrl}/manifests/${r}?api_key=${apiKey}`)
@@ -31,10 +33,13 @@ const App = () => {
         )}
         {meta.status === 'success' && meta.data.photo_manifest.max_sol && (
           <>
-            <Header sol={meta.data.photo_manifest.max_sol} />
-            <main>
-              <Photos sol={meta.data.photo_manifest.max_sol} rover={rover} />
-            </main>
+            <Header sol={sol || meta.data.photo_manifest.max_sol} />
+            <SolControls
+              sol={sol || meta.data.photo_manifest.max_sol}
+              setSol={setSol}
+              maxSol={meta.data.photo_manifest.max_sol}
+            />
+            <Photos sol={sol || meta.data.photo_manifest.max_sol} rover={rover} />
           </>
         )}
       </Container>

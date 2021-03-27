@@ -15,6 +15,7 @@ const theme = createMuiTheme({
     },
     h3: {
       fontFamily: ['Krona One'],
+      fontSize: '2em',
     },
     body1: {
       fontFamily: ['Jura'],
