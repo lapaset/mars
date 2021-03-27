@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useInfiniteQuery } from 'react-query'
 import withWidth, { isWidthUp } from '@material-ui/core/withWidth'
 import { GridList, GridListTile } from '@material-ui/core/'
+import { SRLWrapper } from 'simple-react-lightbox'
 import { apiKey, baseUrl } from '../secret.json'
 import theme from '../styles/theme'
 
@@ -51,25 +52,27 @@ const Photos = ({ sol, rover, width }) => {
   return (
     <>
       {photos.status === 'success' && (
-        <GridList cellHeight={getCellHeight()} className={theme.gridList} cols={cols}>
-          {photos.data.pages.map((page) =>
-            page.data.photos.map((p) => (
-              <GridListTile key={p.id} cols={getGridTileSize(p.id)} rows={getGridTileSize(p.id)}>
-                <img
-                  src={p.img_src}
-                  alt={`${p.rover.name} ${p.camera.full_name} ${p.earth_date}`}
-                  className="MuiGridListTile-imgFullHeight"
-                />
-              </GridListTile>
-            ))
-          )}
-          <div ref={bottomRef} />
-        </GridList>
+        <SRLWrapper>
+          <GridList cellHeight={getCellHeight()} className={theme.gridList} cols={cols}>
+            {photos.data.pages.map((page) =>
+              page.data.photos.map((p) => (
+                <GridListTile key={p.id} cols={getGridTileSize(p.id)} rows={getGridTileSize(p.id)}>
+                  <img
+                    src={p.img_src}
+                    alt={`${p.rover.name} ${p.camera.full_name} ${p.earth_date}`}
+                    className="MuiGridListTile-imgFullHeight"
+                  />
+                </GridListTile>
+              ))
+            )}
+          </GridList>
+        </SRLWrapper>
       )}
       {(photos.status === 'loading' || photos.isFetchingNextPage) && <div>loading</div>}
       {photos.status === 'error' && (
         <div>Nasa says no :( Try refreshing the page or come back later.</div>
       )}
+      <div ref={bottomRef} />
     </>
   )
 }
