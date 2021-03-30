@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useQuery } from 'react-query'
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -23,7 +23,16 @@ const App = () => {
     retry: 1,
   })
 
-  return meta ? (
+  const solControls = () => (
+    <SolControls sol={sol} setSol={setSol} maxSol={meta.data.photo_manifest.max_sol} />
+  )
+
+  useEffect(() => {
+    if (sol === null && meta && meta.data && meta.data.photo_manifest.max_sol)
+      setSol(meta.data.photo_manifest.max_sol)
+  }, [meta])
+
+  return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Container className="App" maxWidth="sm">
@@ -31,20 +40,17 @@ const App = () => {
         {meta.status === 'error' && (
           <div>Nasa says no :( Try refreshing the page or come back later.</div>
         )}
-        {meta.status === 'success' && meta.data.photo_manifest.max_sol && (
+        {meta.status === 'success' && sol && (
           <>
-            <Header sol={sol || meta.data.photo_manifest.max_sol} />
-            <SolControls
-              sol={sol || meta.data.photo_manifest.max_sol}
-              setSol={setSol}
-              maxSol={meta.data.photo_manifest.max_sol}
-            />
-            <Photos sol={sol || meta.data.photo_manifest.max_sol} rover={rover} />
+            <Header sol={sol} />
+            {solControls()}
+            <Photos sol={sol} rover={rover} />
+            {solControls()}
           </>
         )}
       </Container>
     </ThemeProvider>
-  ) : null
+  )
 }
 
 App.propTypes = {}
