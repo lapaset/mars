@@ -4,14 +4,16 @@ import { useQuery } from 'react-query'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { ThemeProvider } from '@material-ui/core/styles'
 import { Container } from '@material-ui/core/'
+
 import { apiKey, baseUrl } from './secret.json'
+import RoverMenu from './components/RoverMenu'
 import Header from './components/Header'
 import Photos from './components/Photos'
 import theme from './styles/theme'
 import SolControls from './components/SolControls'
 
 const App = () => {
-  const rover = 'curiosity'
+  const [rover, setRover] = useState('curiosity')
   const [sol, setSol] = useState(null)
 
   const getMeta = async (r) => {
@@ -32,9 +34,16 @@ const App = () => {
       setSol(meta.data.photo_manifest.max_sol)
   }, [meta])
 
-  return (
+  useEffect(() => {
+    if (meta && meta.data && meta.data.photo_manifest.max_sol)
+      setSol(meta.data.photo_manifest.max_sol)
+  }, [rover])
+
+  return meta ? (
     <ThemeProvider theme={theme[`${rover}Theme`]}>
       <CssBaseline />
+      <RoverMenu rover={rover} setRover={setRover} />
+
       <Container maxWidth="sm">
         {meta.status === 'loading' && <div>Loading, just a sec :)</div>}
         {meta.status === 'error' && (
@@ -50,7 +59,7 @@ const App = () => {
         )}
       </Container>
     </ThemeProvider>
-  )
+  ) : null
 }
 
 App.propTypes = {}
