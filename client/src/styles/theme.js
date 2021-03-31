@@ -10,7 +10,7 @@ const typography = {
   },
   h3: {
     fontFamily: ['Krona One'],
-    fontSize: 25,
+    fontSize: 20,
   },
   body1: {
     fontFamily: ['Jura'],
@@ -18,7 +18,7 @@ const typography = {
   },
   body2: {
     fontFamily: ['Jura'],
-    fontWeight: 400,
+    fontWeight: 700,
   },
 }
 

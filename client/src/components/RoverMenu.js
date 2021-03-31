@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { IconButton, Menu, MenuItem } from '@material-ui/core/'
 import MenuIcon from '@material-ui/icons/Menu'
 
-const RoverMenu = ({ rover, setRover }) => {
+const RoverMenu = ({ rover, setRover, setSol }) => {
   const [menuAnchor, setMenuAnchor] = useState(null)
 
   const options = [
@@ -17,6 +17,7 @@ const RoverMenu = ({ rover, setRover }) => {
   const handleClick = (r) => {
     if (r === rover) return
     handleClose()
+    setSol(null)
     setRover(r)
   }
   return (
@@ -44,6 +45,7 @@ const RoverMenu = ({ rover, setRover }) => {
 RoverMenu.propTypes = {
   rover: PropTypes.string.isRequired,
   setRover: PropTypes.func.isRequired,
+  setSol: PropTypes.func.isRequired,
 }
 
 export default RoverMenu

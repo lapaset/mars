@@ -14,7 +14,7 @@ const useStyles = makeStyles({
   },
 })
 
-const Photos = ({ sol, rover, width }) => {
+const Photos = ({ sol, rover, solControls, width }) => {
   const bottomRef = useRef()
   const classes = useStyles()
 
@@ -73,8 +73,14 @@ const Photos = ({ sol, rover, width }) => {
               ))
             )}
           </GridList>
+          {photos.data.pages.length === 0 || photos.data.pages[0].data.photos.length === 0 ? (
+            <div>No photos this sol</div>
+          ) : (
+            !photos.hasNextPage && solControls()
+          )}
         </SRLWrapper>
       )}
+
       {(photos.status === 'loading' || photos.isFetchingNextPage) && (
         <CircularProgress size={30} className={classes.spinner} />
       )}
@@ -89,6 +95,7 @@ const Photos = ({ sol, rover, width }) => {
 Photos.propTypes = {
   sol: PropTypes.number.isRequired,
   rover: PropTypes.string.isRequired,
+  solControls: PropTypes.func.isRequired,
   width: PropTypes.string.isRequired,
 }
 

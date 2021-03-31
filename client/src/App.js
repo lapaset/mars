@@ -34,15 +34,10 @@ const App = () => {
       setSol(meta.data.photo_manifest.max_sol)
   }, [meta])
 
-  useEffect(() => {
-    if (meta && meta.data && meta.data.photo_manifest.max_sol)
-      setSol(meta.data.photo_manifest.max_sol)
-  }, [rover])
-
   return meta ? (
     <ThemeProvider theme={theme[`${rover}Theme`]}>
       <CssBaseline />
-      <RoverMenu rover={rover} setRover={setRover} />
+      <RoverMenu rover={rover} setRover={setRover} setSol={setSol} />
 
       <Container maxWidth="sm">
         {meta.status === 'loading' && <div>Loading, just a sec :)</div>}
@@ -53,8 +48,7 @@ const App = () => {
           <>
             <Header meta={meta.data.photo_manifest} />
             {solControls()}
-            <Photos sol={sol} rover={rover} />
-            {solControls()}
+            <Photos sol={sol} rover={rover} solControls={solControls} />
           </>
         )}
       </Container>

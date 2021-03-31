@@ -12,7 +12,7 @@ const ControlButton = ({ sol, setSol, start }) =>
       startIcon={start ? <ArrowBack /> : false}
       endIcon={start ? false : <ArrowForward />}
     >
-      <Typography variant="body1">{`sol ${sol}`}</Typography>
+      <Typography variant="body1">{sol}</Typography>
     </Button>
   )
 
@@ -29,7 +29,9 @@ ControlButton.propTypes = {
 
 const useStyles = makeStyles({
   controls: {
-    padding: '2em 0 1em',
+    border: 'solid 1px black',
+    background: 'white',
+    borderBottom: 'none',
   },
 })
 
