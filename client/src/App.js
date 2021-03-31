@@ -33,16 +33,16 @@ const App = () => {
   }, [meta])
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme[`${rover}Theme`]}>
       <CssBaseline />
-      <Container className="App" maxWidth="sm">
+      <Container maxWidth="sm">
         {meta.status === 'loading' && <div>Loading, just a sec :)</div>}
         {meta.status === 'error' && (
           <div>Nasa says no :( Try refreshing the page or come back later.</div>
         )}
         {meta.status === 'success' && sol && (
           <>
-            <Header sol={sol} />
+            <Header meta={meta.data.photo_manifest} />
             {solControls()}
             <Photos sol={sol} rover={rover} />
             {solControls()}

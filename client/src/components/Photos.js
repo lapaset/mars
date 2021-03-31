@@ -3,13 +3,20 @@ import PropTypes from 'prop-types'
 import axios from 'axios'
 import { useInfiniteQuery } from 'react-query'
 import withWidth, { isWidthUp } from '@material-ui/core/withWidth'
-import { GridList, GridListTile } from '@material-ui/core/'
+import { makeStyles } from '@material-ui/core/styles'
+import { GridList, GridListTile, CircularProgress } from '@material-ui/core/'
 import { SRLWrapper } from 'simple-react-lightbox'
 import { apiKey, baseUrl } from '../secret.json'
-import theme from '../styles/theme'
+
+const useStyles = makeStyles({
+  spinner: {
+    margin: 10,
+  },
+})
 
 const Photos = ({ sol, rover, width }) => {
   const bottomRef = useRef()
+  const classes = useStyles()
 
   const photosPerPage = 25
   const highlight = 7
@@ -31,11 +38,11 @@ const Photos = ({ sol, rover, width }) => {
   useEffect(() => {
     const handleScroll = () => {
       if (
-        !photos.isLoading &&
-        !photos.isFetchingNextPage &&
-        photos.hasNextPage &&
         bottomRef.current &&
-        bottomRef.current.getBoundingClientRect().top < window.innerHeight
+        bottomRef.current.getBoundingClientRect().top < window.innerHeight &&
+        photos.hasNextPage &&
+        !photos.isLoading &&
+        !photos.isFetchingNextPage
       )
         photos.fetchNextPage()
     }
@@ -53,7 +60,7 @@ const Photos = ({ sol, rover, width }) => {
     <main>
       {photos.status === 'success' && (
         <SRLWrapper>
-          <GridList cellHeight={getCellHeight()} className={theme.gridList} cols={cols}>
+          <GridList cellHeight={getCellHeight()} cols={cols}>
             {photos.data.pages.map((page) =>
               page.data.photos.map((p) => (
                 <GridListTile key={p.id} cols={getGridTileSize(p.id)} rows={getGridTileSize(p.id)}>
@@ -68,7 +75,9 @@ const Photos = ({ sol, rover, width }) => {
           </GridList>
         </SRLWrapper>
       )}
-      {(photos.status === 'loading' || photos.isFetchingNextPage) && <div>loading</div>}
+      {(photos.status === 'loading' || photos.isFetchingNextPage) && (
+        <CircularProgress size={30} className={classes.spinner} />
+      )}
       {photos.status === 'error' && (
         <div>Nasa says no :( Try refreshing the page or come back later.</div>
       )}

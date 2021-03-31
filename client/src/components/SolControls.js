@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Grid, Button, Typography } from '@material-ui/core/'
+import { makeStyles } from '@material-ui/core/styles'
 import ArrowBack from '@material-ui/icons/ArrowBack'
 import ArrowForward from '@material-ui/icons/ArrowForward'
 
@@ -26,7 +27,14 @@ ControlButton.propTypes = {
   start: PropTypes.bool,
 }
 
+const useStyles = makeStyles({
+  controls: {
+    padding: '2em 0 1em',
+  },
+})
+
 const SolControls = ({ sol, setSol, maxSol }) => {
+  const classes = useStyles()
   const nextSol = () => (sol && sol < maxSol ? sol + 1 : null)
 
   const previousSol = () => {
@@ -36,7 +44,13 @@ const SolControls = ({ sol, setSol, maxSol }) => {
   }
 
   return (
-    <Grid container direction="row" justify="center" alignItems="center">
+    <Grid
+      container
+      direction="row"
+      justify="center"
+      alignItems="center"
+      className={classes.controls}
+    >
       <Grid item xs={4} style={{ textAlign: 'left' }}>
         <ControlButton sol={nextSol()} setSol={setSol} start />
       </Grid>
