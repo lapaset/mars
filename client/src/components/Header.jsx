@@ -4,6 +4,14 @@ import { Typography, Grid, Box } from '@material-ui/core/'
 import { makeStyles, styled } from '@material-ui/core/styles'
 
 const constants = {
+  Perseverance: {
+    viewBox: '0 0 550 80',
+    fontSize: '60',
+    x: 0,
+    y: 60,
+    quote: `I can remember in early elementary school when the Russians launched the first satellite. There was still so much unknown about space. People thought Mars was probably populated.`,
+    author: 'Christa McAuliffe',
+  },
   Curiosity: {
     viewBox: '0 0 550 110',
     fontSize: '94.5',
@@ -58,7 +66,7 @@ const useStyles = makeStyles({
   },
 })
 
-const Header = ({ meta }) => {
+const Header = ({ meta, sol }) => {
   const classes = useStyles()
 
   const info = constants[meta.name]
@@ -88,14 +96,16 @@ const Header = ({ meta }) => {
         </Grid>
       </Grid>
 
-      <QuoteBox>
-        <Typography variant="body1" align="right" gutterBottom>
-          {info.quote}
-        </Typography>
-        <Typography variant="body2" align="right" gutterBottom>
-          {`- ${info.author}`}
-        </Typography>
-      </QuoteBox>
+      {sol === meta.max_sol && (
+        <QuoteBox>
+          <Typography variant="body1" align="right" gutterBottom>
+            {info.quote}
+          </Typography>
+          <Typography variant="body2" align="right" gutterBottom>
+            {`- ${info.author}`}
+          </Typography>
+        </QuoteBox>
+      )}
     </header>
   )
 }
@@ -103,6 +113,7 @@ const Header = ({ meta }) => {
 Header.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   meta: PropTypes.object.isRequired,
+  sol: PropTypes.number.isRequired,
 }
 
 export default Header

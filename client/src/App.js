@@ -13,7 +13,7 @@ import theme from './styles/theme'
 import SolControls from './components/SolControls'
 
 const App = () => {
-  const [rover, setRover] = useState('curiosity')
+  const [rover, setRover] = useState('perseverance')
   const [sol, setSol] = useState(null)
 
   const getMeta = async (r) => {
@@ -46,7 +46,7 @@ const App = () => {
         )}
         {meta.status === 'success' && sol && (
           <>
-            <Header meta={meta.data.photo_manifest} />
+            <Header meta={meta.data.photo_manifest} sol={sol} />
             {solControls()}
             <Photos sol={sol} rover={rover} solControls={solControls} />
           </>

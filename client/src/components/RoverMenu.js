@@ -7,6 +7,7 @@ const RoverMenu = ({ rover, setRover, setSol }) => {
   const [menuAnchor, setMenuAnchor] = useState(null)
 
   const options = [
+    { label: 'Perseverance', value: 'perseverance' },
     { label: 'Curiosity', value: 'curiosity' },
     { label: 'Opportunity', value: 'opportunity' },
     { label: 'Spirit', value: 'spirit' },

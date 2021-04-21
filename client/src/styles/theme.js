@@ -22,6 +22,18 @@ const typography = {
   },
 }
 
+const perseveranceTheme = createMuiTheme({
+  palette: {
+    primary: {
+      main: '#000',
+    },
+    background: {
+      default: '#cfbede',
+    },
+  },
+  typography,
+})
+
 const curiosityTheme = createMuiTheme({
   palette: {
     primary: {
@@ -40,7 +52,7 @@ const opportunityTheme = createMuiTheme({
       main: '#000',
     },
     background: {
-      default: 'thistle',
+      default: '#afedd2',
     },
   },
   typography,
@@ -52,13 +64,14 @@ const spiritTheme = createMuiTheme({
       main: '#000',
     },
     background: {
-      default: '#afedd2',
+      default: 'powderblue',
     },
   },
   typography,
 })
 
 export default {
+  perseveranceTheme: responsiveFontSizes(perseveranceTheme),
   curiosityTheme: responsiveFontSizes(curiosityTheme),
   opportunityTheme: responsiveFontSizes(opportunityTheme),
   spiritTheme: responsiveFontSizes(spiritTheme),
