@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useQuery } from 'react-query'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import { ThemeProvider } from '@material-ui/core/styles'
-import { Container } from '@material-ui/core/'
+import { ThemeProvider, makeStyles } from '@material-ui/core/styles'
+import { Container, CircularProgress } from '@material-ui/core/'
 
 import { apiKey, baseUrl } from './secret.json'
 import RoverMenu from './components/RoverMenu'
@@ -12,9 +12,16 @@ import Photos from './components/Photos'
 import theme from './styles/theme'
 import SolControls from './components/SolControls'
 
+const useStyles = makeStyles({
+  spinner: {
+    margin: 10,
+  },
+})
+
 const App = () => {
   const [rover, setRover] = useState('perseverance')
   const [sol, setSol] = useState(null)
+  const classes = useStyles()
 
   const getMeta = async (r) => {
     const { data } = await axios.get(`${baseUrl}/manifests/${r}?api_key=${apiKey}`)
@@ -40,7 +47,7 @@ const App = () => {
       <RoverMenu rover={rover} setRover={setRover} setSol={setSol} />
 
       <Container maxWidth="sm">
-        {meta.status === 'loading' && <div>Loading, just a sec :)</div>}
+        {meta.status === 'loading' && <CircularProgress size={30} className={classes.spinner} />}
         {meta.status === 'error' && (
           <div>Nasa says no :( Try refreshing the page or come back later.</div>
         )}
