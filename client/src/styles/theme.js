@@ -52,7 +52,7 @@ const opportunityTheme = createMuiTheme({
       main: '#000',
     },
     background: {
-      default: 'pink',
+      default: '#afedd2',
     },
   },
   typography,
